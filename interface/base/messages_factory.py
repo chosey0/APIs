@@ -5,6 +5,35 @@ from typing import Dict, Any, Optional
 import json
 
 @dataclass
+class BaseMessage:
+    url: Optional[str] = None
+    headers: Optional[Dict[str, Any]] = None
+    json: Optional[Dict[str, Any]] = None
+    data: Optional[Dict[str, Any]] = None
+    body: Optional[Dict[str, Any]] = None
+    
+    def to_dict(self):
+        message = {}
+        for key, value in asdict(self).items():
+            if value is not None:
+                message[f'{key}'] = value
+        return message
+    
+    def to_json(self):
+        return json.dumps(self.to_dict())
+    
+class MessageStrategy(ABC):
+    @staticmethod
+    @abstractmethod
+    def create_message(self, **kwargs) -> BaseMessage:
+        pass
+    
+class MessageContext:
+    @staticmethod
+    def create_message(strategy: MessageStrategy, **kwargs) -> Dict:
+        return strategy.create_message(**kwargs)
+    
+@dataclass
 class Header:
     content_type: str = "application/json; charset=UTF-8"
     approval_key: Optional[str] = None
@@ -17,10 +46,10 @@ class Header:
             if value is not None:
                 headers[f'{key}'] = value
         return headers
-      
+
     def to_json(self):
         return json.dumps(self.to_dict())
-      
+
 @dataclass
 class Body:
     grant_type: Optional[str] = None
@@ -37,30 +66,12 @@ class Body:
             if value is not None:
                 body[f'{key}'] = value
         return body
-      
+
     def to_json(self):
         return json.dumps(self.to_dict())
-      
-@dataclass
-class BaseMessage:
-    url: Optional[str] = None
-    headers: Optional[Dict[str, Any]] = None
-    json: Optional[Dict[str, Any]] = None
-    data: Optional[Dict[str, Any]] = None
-    body: Optional[Dict[str, Any]] = None
+
+
+
+
     
-    def to_dict(self):
-      message = {}
-      for key, value in asdict(self).items():
-          if value is not None:
-              message[f'{key}'] = value
-      return message
-    
-    def to_json(self):
-        return json.dumps(self.to_dict())
-    
-class MessageFactory(ABC):
-  @staticmethod
-  @abstractmethod
-  def create_message(message_type: str, **kwargs) -> Any:
-    raise NotImplementedError
+
