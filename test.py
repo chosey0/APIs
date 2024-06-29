@@ -1,2 +1,4 @@
-from interface.kis.messages import SubscribeMessage
-print(SubscribeMessage(approval_key="test", stock_code="test", tr_id="test").to_dict())
+import os
+
+from interface.base.messages_factory import BaseMessage
+print(BaseMessage.from_kwargs(tr_id="test").to_dict())

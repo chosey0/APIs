@@ -32,7 +32,8 @@ def main():
     logger = logging.getLogger(__name__)
     logger.info("Starting the main script")
     
-    print(KISAgent.read_token())
+    print(eBestAgent.get_chart_data("minute",
+                                    shcode = "005930"))
 if __name__ == "__main__":
     # from dotenv import load_dotenv
     # load_dotenv()

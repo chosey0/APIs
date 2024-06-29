@@ -7,7 +7,7 @@ from websockets import WebSocketClientProtocol
 from typing import Optional, Dict, Any, Tuple
 
 from interface.base.agent import AgentInterface
-from interface.kis.messages import GetApprovalMessage, GetTokenMessage
+from interface.kis.messages import GetApproval, GetToken
 
 import logging
 
@@ -20,7 +20,7 @@ class KISAgent(AgentInterface):
     @classmethod
     def get_token(cls) -> Dict[str, str]:
         try:
-            response = requests.post(**GetTokenMessage().to_dict())
+            response = requests.post(**GetToken.create_message())
             response_json = response.json()
             response.raise_for_status()
             return cls.parsing_token_exp(response_json)
@@ -44,7 +44,7 @@ class KISAgent(AgentInterface):
     def get_approval_key() -> Dict[str, str]:
         
         try:
-            response = requests.post(**GetApprovalMessage().to_dict())
+            response = requests.post(**GetApproval.create_message())
             response_json = response.json()
             
             if response.status_code == 200:
