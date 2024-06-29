@@ -1,5 +1,6 @@
 from core.agent.ebest import eBestAgent
 from core.agent.korea_investments import KISAgent
+from interface.eBest.messages_handler import chart_data_handler
 
 import logging
 
@@ -32,8 +33,7 @@ def main():
     logger = logging.getLogger(__name__)
     logger.info("Starting the main script")
     
-    print(eBestAgent.get_chart_data("minute",
-                                    shcode = "005930"))
+    print(chart_data_handler(eBestAgent.get_chart_data("minute", shcode = "005930")["t8412OutBlock1"]))
 if __name__ == "__main__":
     # from dotenv import load_dotenv
     # load_dotenv()

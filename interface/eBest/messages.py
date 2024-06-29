@@ -6,7 +6,6 @@ from interface.eBest.tr_code import TRCode
 from interface.eBest.endpoint import Endpoint
 from interface.base.messages_factory import MessageStrategy, BaseMessage
 
-
 class GetToken(MessageStrategy):
     @staticmethod
     def create_message(**kwargs) -> BaseMessage:
