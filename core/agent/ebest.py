@@ -3,7 +3,7 @@ import requests
 from typing import Dict, Any, Tuple
 
 from interface.base.agent import AgentInterface
-from interface.eBest.messages import GetToken, GetChartData
+from layout.eBest.messages import GetToken, GetChartData
 from datetime import datetime, timedelta
 
 import logging

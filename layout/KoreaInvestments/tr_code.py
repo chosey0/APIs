@@ -6,6 +6,7 @@ class TRCode:
   transaction_notify: str = "H0STCNI0"
   order_book: str = "H0STASP0"
   
+  overseas_minute_candle: str = "HHDFS76950200"
   overseas_transaction: str = "HDFSCNT0"
   overseas_transaction_notify: str = "H0GSCNI0"
   usa_order_book: str = "HDFSASP0"

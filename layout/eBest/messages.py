@@ -2,8 +2,8 @@ import os
 from urllib.parse import urljoin
 from dataclasses import dataclass
 
-from interface.eBest.tr_code import TRCode
-from interface.eBest.endpoint import Endpoint
+from layout.eBest.tr_code import TRCode
+from layout.eBest.endpoint import Endpoint
 from interface.base.messages_factory import MessageStrategy, BaseMessage
 
 class GetToken(MessageStrategy):

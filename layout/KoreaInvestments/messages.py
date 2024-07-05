@@ -2,8 +2,8 @@ import os
 from urllib.parse import urljoin
 from typing import Dict
 
-from interface.kis.tr_code import TRCode
-from interface.kis.endpoint import Endpoint
+from layout.KoreaInvestments.tr_code import TRCode
+from layout.KoreaInvestments.endpoint import Endpoint
 from interface.base.messages_factory import MessageStrategy, BaseMessage
     
 class GetApproval(MessageStrategy):
@@ -56,6 +56,33 @@ class UnSubscribe(MessageStrategy):
 
         return BaseMessage.from_kwargs(headers=headers, body=body).to_json()
 
+class OverseasMinuteCandle(MessageStrategy):
+    @staticmethod
+    def create_message(symbol, tr_cont: str = "", exchange_code: str = "NAS", gap: int = 1) -> BaseMessage:
+        url = urljoin(Endpoint.base_url, Endpoint.overseas_minute_candle)
+        headers = BaseMessage.from_kwargs(
+                        authorization=os.getenv("KIS_TOKEN"),
+                        appkey=os.getenv("KIS_RAPP"),
+                        appsecret=os.getenv("KIS_RSEC"),
+                        content_type="application/json; charset=utf-8",
+                        tr_id=TRCode.overseas_minute_candle,
+                        tr_cont=tr_cont,
+                        custtype="P",
+                        ).to_dict()
+
+        params = BaseMessage.from_kwargs(
+            AUTH="",
+            EXCD=exchange_code,
+            SYMB=symbol,
+            NMIN=f"{gap}",
+            PINC="1",
+            NEXT="",
+            NREC="120",
+            FILL="",
+            KEYB=""
+            ).to_dict()
+
+        return BaseMessage.from_kwargs(url=url, headers=headers, params=params).to_dict()
 
 # headers = {
 #     "approval_key": kwargs.get("approval_key"),

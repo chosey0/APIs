@@ -6,10 +6,12 @@ from datetime import datetime, timezone
 import websockets
 from websockets import WebSocketClientProtocol
 
-from typing import Optional, Dict, Any, Tuple
+from typing import Optional, Dict, Any, Tuple, Callable
 
 from interface.base.agent import AgentInterface
-from interface.kis.messages import GetApproval, GetToken
+from interface.base.websocket_agent import WebsocketAgent
+from layout.KoreaInvestments.messages import GetApproval, GetToken
+
 
 import logging
 
@@ -17,7 +19,6 @@ logger = logging.getLogger(__name__)
 
 class KISAgent(AgentInterface):
     name = "KIS"
-    url = "ws://ops.koreainvestment.com:21000"
     
     @classmethod
     def get_token(cls) -> Dict[str, str]:
@@ -60,3 +61,33 @@ class KISAgent(AgentInterface):
             logger.error(e)
     
     
+class KISWebSocketAgent(WebsocketAgent):
+    def __init__(self):
+        super().__init__()
+        self.url = "ws://ops.koreainvestment.com:21000"
+
+    async def receive_loop(self, callback: Callable):
+        await self.connect()
+        
+        try:
+            while True:
+                data = await self.session.recv()
+                recv_time = datetime.now(tz=timezone.utc).timestamp()
+
+                if data[0] == '0':
+                    await callback([recv_time, data])
+                    
+                elif data[0] == '1':
+                    continue
+                
+                else:
+                    jsonObject = json.loads(data)
+                    trid = jsonObject["header"]["tr_id"]
+                
+                if trid == "PINGPONG":
+                    logger.info(f"{data}")
+                    await self.session.pong(data)
+                else:
+                    continue
+        except websockets.ConnectionClosed:
+            print("Connection closed")

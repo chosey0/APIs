@@ -9,6 +9,9 @@ class Endpoint:
     revoke_token: str = 'oauth2/revokeP'
     approval_key: str = "oauth2/Approval"
     
+    
+    overseas_minute_candle = "uapi/overseas-price/v1/quotations/inquire-time-itemchartprice"
+    
     transaction: str = "tryitout/H0STCNT0"
     transaction_notify: str = "tryitout/H0STCNI0"
     order_book: str = "tryitout/H0STASP0"
