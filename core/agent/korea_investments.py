@@ -7,8 +7,8 @@ import websockets
 
 from typing import Dict, Any, Tuple, Callable
 
-from interface.base.agent import AgentInterface
-from interface.base.websocket_agent import WebsocketAgent
+from interface.agent import AgentInterface
+from interface.websocket_agent import WebsocketAgent
 from layout.KoreaInvestments.messages import GetApproval, GetToken
 
 

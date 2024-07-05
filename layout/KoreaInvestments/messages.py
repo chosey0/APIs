@@ -8,7 +8,7 @@ from typing import Dict
 
 from layout.KoreaInvestments.tr_code import TRCode
 from layout.KoreaInvestments.endpoint import Endpoint
-from interface.base.messages_factory import MessageStrategy, BaseMessage
+from interface.messages_factory import MessageStrategy, BaseMessage
 
 class GetApproval(MessageStrategy):
     @staticmethod

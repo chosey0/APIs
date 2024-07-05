@@ -39,8 +39,6 @@ class WebsocketAgent(threading.Thread):
             callback(message)
     except websockets.ConnectionClosed:
         print("Connection closed")
-          
-
       
   def run(self, callback: Callable = print):
     loop = asyncio.new_event_loop()  # Create a new event loop for this thread

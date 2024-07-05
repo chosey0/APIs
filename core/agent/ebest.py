@@ -2,7 +2,7 @@ import os
 import requests
 from typing import Dict, Any, Tuple
 
-from interface.base.agent import AgentInterface
+from interface.agent import AgentInterface
 from layout.eBest.messages import GetToken, GetChartData
 from datetime import datetime, timedelta
 

@@ -4,7 +4,7 @@ from dataclasses import dataclass
 
 from layout.eBest.tr_code import TRCode
 from layout.eBest.endpoint import Endpoint
-from interface.base.messages_factory import MessageStrategy, BaseMessage
+from interface.messages_factory import MessageStrategy, BaseMessage
 
 class GetToken(MessageStrategy):
     @staticmethod
