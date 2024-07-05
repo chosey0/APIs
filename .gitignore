@@ -171,3 +171,4 @@ env.yaml
 *.csv
 *.xlsx
 *.xls
+.env.*

@@ -19,8 +19,8 @@ logger = logging.getLogger(__name__)
 
 class AgentInterface(ABC):
     
-    @classmethod
-    def get(cls, url, headers, params):
+    @staticmethod
+    def get(url, headers, params):
         response = requests.get(url=url, headers=headers, params=params)
         
         try:

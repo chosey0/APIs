@@ -33,8 +33,6 @@ console_handler = logging.StreamHandler()
 console_handler.setFormatter(formatter)
 logger.addHandler(console_handler)
 
-import time
-
 def main():
     logger = logging.getLogger(__name__)
     logger.info("Starting the main script")

@@ -2,8 +2,11 @@ from typing import Dict, Any, Tuple
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, asdict, field
 from typing import Dict, Any, Union
+
 import json
-from typing import ClassVar
+import os
+
+
 @dataclass
 class BaseMessage:
     attributes: Dict[str, Any] = field(default_factory=dict)

@@ -1,12 +1,11 @@
 import os
+
 import json
-import asyncio
 import requests
 from datetime import datetime, timezone
 import websockets
-from websockets import WebSocketClientProtocol
 
-from typing import Optional, Dict, Any, Tuple, Callable
+from typing import Dict, Any, Tuple, Callable
 
 from interface.base.agent import AgentInterface
 from interface.base.websocket_agent import WebsocketAgent
