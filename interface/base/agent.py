@@ -2,7 +2,10 @@ from abc import ABC, abstractmethod
 import os
 from dotenv import find_dotenv, set_key
 
-import requests
+import websockets
+from websockets import WebSocketClientProtocol
+
+import asyncio
 from datetime import datetime
 
 from typing import Dict, Tuple
@@ -86,3 +89,34 @@ class AgentInterface(ABC):
             logger.error(f"[interface.agent.py - update_token] Failed to update token: {e}")
             
         return TOKEN
+
+    @staticmethod
+    @abstractmethod
+    def run(message_queue: asyncio.Queue):
+        return NotImplementedError
+    
+    @classmethod
+    async def run_streaming(cls, message_queue, ping_interval=30):
+        async with websockets.connect(cls.url, ping_interval=ping_interval) as session:
+            await cls.streaming_loop(session, message_queue)
+            
+    @staticmethod
+    @abstractmethod
+    async def streaming_loop(session: WebSocketClientProtocol, message_queue: asyncio.Queue):
+        """_summary_
+            웹소켓 세션을 통해 데이터를 수신하는 루프 메소드
+
+        Args:
+            session ([type]): 현재 연결된 웹소켓 세션
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    async def response_handler(jsonObject):
+        """_summary_
+            웹소켓 세션을 통해 수신된 데이터를 처리하는 메소드
+
+        Args:
+            jsonObject ([type]): 수신된 JSON 데이터
+        """
+        raise NotImplementedError
