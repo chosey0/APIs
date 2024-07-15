@@ -22,6 +22,7 @@ class WebsocketAgent(threading.Thread):
     self.session = await websockets.connect(self.url, ping_interval=30)
     
   async def send(self, message):
+    print(message)
     await self.session.send(message)
 
   async def receive(self):

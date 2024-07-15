@@ -32,6 +32,15 @@ class GetToken(MessageStrategy):
         return BaseMessage.from_kwargs(url=url, headers=headers, json=json).to_dict()
 
 class Subscribe(MessageStrategy):
+    """
+        해외 및 국내 주식 실시간 시세 구독 메세지 클래스
+
+    Args:
+        MessageStrategy (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
     @staticmethod
     def create_message(approval_key, tr_id, stock_code) -> BaseMessage:
         headers = BaseMessage.from_kwargs(
@@ -41,7 +50,7 @@ class Subscribe(MessageStrategy):
                         content_type="utf-8").to_dict()
 
         body = BaseMessage.from_kwargs(input=dict(tr_id=tr_id, tr_key=stock_code)).to_dict()
-        return BaseMessage.from_kwargs(headers=headers, body=body).to_json()
+        return BaseMessage.from_kwargs(header=headers, body=body).to_json()
 
 class UnSubscribe(MessageStrategy):
     @staticmethod
@@ -58,7 +67,7 @@ class UnSubscribe(MessageStrategy):
                 tr_key=stock_code).to_dict()
             ).to_dict()
 
-        return BaseMessage.from_kwargs(headers=headers, body=body).to_json()
+        return BaseMessage.from_kwargs(header=headers, body=body).to_json()
 
 class OverseasDayCandle(MessageStrategy):
     @staticmethod

@@ -61,11 +61,14 @@ class KISAgent(AgentInterface):
     
     
 class KISWebSocketAgent(WebsocketAgent):
-    def __init__(self):
+    def __init__(self, tr_id = None):
         super().__init__()
         
-        self.url = "ws://ops.koreainvestment.com:21000"
-
+        if tr_id is not None:
+            self.url = f"ws://ops.koreainvestment.com:21000/tryitout/{tr_id}"
+        else:
+            self.url = "ws://ops.koreainvestment.com:21000"
+        
     async def receive_loop(self, callback: Callable):
         await self.connect()
         
@@ -73,21 +76,25 @@ class KISWebSocketAgent(WebsocketAgent):
             while True:
                 data = await self.session.recv()
                 recv_time = datetime.now(tz=timezone.utc).timestamp()
-
+                
                 if data[0] == '0':
-                    await callback([recv_time, data])
+                    callback([recv_time, data])
                     
                 elif data[0] == '1':
                     continue
-                
+                    
                 else:
-                    jsonObject = json.loads(data)
-                    trid = jsonObject["header"]["tr_id"]
-                
-                if trid == "PINGPONG":
-                    logger.info(f"{data}")
-                    await self.session.pong(data)
-                else:
-                    continue
+                    try:
+                        jsonObject = json.loads(data)
+                        trid = jsonObject["header"]["tr_id"]
+                        
+                        if trid == "PINGPONG":
+                            logger.info(f"{data}")
+                            await self.session.pong(data)
+                        else:
+                            continue
+                    except:
+                        continue
+                    
         except websockets.ConnectionClosed:
             print("Connection closed")

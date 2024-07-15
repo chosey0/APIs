@@ -18,4 +18,31 @@ class TRCode:
   
 @dataclass
 class TRKey:
-  tr_key: str
+  """ https://apiportal.koreainvestment.com/apiservice/apiservice-oversea-stock-real2#L_52290e93-e94c-4d2a-9ce3-c304681d3807
+      <미국 야간거래/아시아 주간거래>
+      D+시장구분(3자리)+종목코드
+      예) DNASAAPL : D+NAS(나스닥)+AAPL(애플)
+      [시장구분]
+      NYS : 뉴욕, NAS : 나스닥, AMS : 아멕스 ,
+      TSE : 도쿄, HKS : 홍콩,
+      SHS : 상해, SZS : 심천
+      HSX : 호치민, HNX : 하노이
+
+      <미국 주간거래>
+      R+시장구분(3자리)+종목코드
+      예) RBAQAAPL : R+BAQ(나스닥)+AAPL(애플)
+      [시장구분]
+      BAY : 뉴욕(주간), BAQ : 나스닥(주간). BAA : 아멕스(주간)
+  """
+  
+  USA_DAY: str = "R"
+  USA_DAY_NASDAQ: str = "BAQ"
+  USA_DAY_NEWYORK: str = "BAY"
+  USA_DAY_AMEX: str = "BAA"
+  
+  USA_LOCAL: str = "D"
+  NASDAQ: str = "NAS"
+  NEWYORK: str = "NYS"
+  AMEX: str = "AMS"
+  
+  
