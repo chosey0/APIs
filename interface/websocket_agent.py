@@ -10,6 +10,7 @@ import threading
 class WebsocketAgent(threading.Thread):
   def __init__(self):
     super().__init__()
+    self.setDaemon(True)
     self.name = "WebsocketAgent"
     
     self.url = "wss://echo.websocket.org"

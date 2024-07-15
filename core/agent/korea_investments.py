@@ -63,6 +63,7 @@ class KISAgent(AgentInterface):
 class KISWebSocketAgent(WebsocketAgent):
     def __init__(self):
         super().__init__()
+        
         self.url = "ws://ops.koreainvestment.com:21000"
 
     async def receive_loop(self, callback: Callable):

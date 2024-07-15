@@ -1,6 +1,5 @@
 from core.agent.ebest import eBestAgent
 from core.agent.korea_investments import KISAgent, KISWebSocketAgent
-from interface.eBest.messages_handler import chart_data_handler
 from layout.KoreaInvestments.messages import Subscribe
 from layout.KoreaInvestments.tr_code import TRCode
 
@@ -33,11 +32,13 @@ console_handler = logging.StreamHandler()
 console_handler.setFormatter(formatter)
 logger.addHandler(console_handler)
 
+import pandas as pd
+
 def main():
     logger = logging.getLogger(__name__)
     logger.info("Starting the main script")
-    
-    msg = Subscribe.create_message(approval_key=KISAgent.get_approval_key(), tr_id=TRCode.transaction, stock_code="005930")
+    df = pd.read_csv("data/stock_info/nas_code.csv", header="infer")[["realtime symbol", "Korea name"]]
+    msg = Subscribe.create_message(approval_key=KISAgent.get_approval_key(), tr_id=TRCode.overseas_transaction, stock_code=df[df["Korea name"] == "엔비디아"]["realtime symbol"].values[0])
     print(msg)
     # print(msg)
     # agent = KISWebSocketAgent()
