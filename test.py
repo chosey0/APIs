@@ -8,17 +8,16 @@ URL = "wss://stream.binance.com:9443/ws/btcusdt@trade"
 msg = {
   "method": "SUBSCRIBE",
   "params": [
-    "btcusdt@aggTrade",
-    "btcusdt@depth"
+    "btcusdt@trade",
   ],
   "id": 1
 }
 
 def handle_trades(json_message):
     date_time = datetime.fromtimestamp(json_message['E']/1000).strftime('%Y-%m-%d %H:%M:%S')
-    print("SYMBOL: "+json_message['s'])
-    print("PRICE: "+json_message['p'])
-    print("QTY: "+json_message['q'])
+    print("Symbol: "+json_message['s'])
+    print("Price: "+json_message['p'])
+    print("Quantity: "+json_message['q'])
     print("TIMESTAMP: " + str(date_time))
     print("-----------------------")
 
