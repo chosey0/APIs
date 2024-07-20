@@ -7,6 +7,7 @@ from layout.KoreaInvestments.messages import OverseasMinuteCandle
 from core.agent.korea_investments import KISAgent
 
 def main():
+    KISAgent.read_token()
     message = OverseasMinuteCandle.create_message("TSLA")
     data = KISAgent.get(**message)
     print(OverseasMinuteCandle.handler(data))
