@@ -9,6 +9,8 @@ from typing import Dict, Any, Tuple, Callable
 
 from interface.agent import AgentInterface
 from interface.websocket_agent import WebsocketAgent
+from interface.message_queue import MessageQueueManager
+from interface.exceptions import PingPongException, NotDataStringException
 from layout.KoreaInvestments.messages import GetApproval, GetToken
 
 
@@ -58,8 +60,7 @@ class KISAgent(AgentInterface):
         
         except Exception as e:
             logger.error(e)
-    
-    
+            
 class KISWebSocketAgent(WebsocketAgent):
     def __init__(self, tr_id = None):
         super().__init__()
@@ -68,33 +69,54 @@ class KISWebSocketAgent(WebsocketAgent):
             self.url = f"ws://ops.koreainvestment.com:21000/tryitout/{tr_id}"
         else:
             self.url = "ws://ops.koreainvestment.com:21000"
+    
+    async def recv_handler(self, callback: Callable):
+        recv_time = datetime.now(tz=timezone.utc).timestamp()
+        recvstr = await self.session.recv()
+        
+        if recvstr[0] == "0":
+            await callback([recv_time, recvstr])
+            print(recvstr)
+            return
+            # status_code, tr_id, cnt, datastr = recvstr.split("|")
+        else:
+            raise NotDataStringException(recvstr)
+    
+    def not_data_string_exception_handler(self, data: str):
+        jsonObject = json.loads(data)
+        trid = jsonObject["header"]["tr_id"]
+        
+        if trid != "PINGPONG":
+            rt_cd = jsonObject["body"]["rt_cd"]
+            
+            if rt_cd == '1':  # 에러
+                if jsonObject["body"]["msg1"] != 'ALREADY IN SUBSCRIBE':
+                    logger.error("### ERROR RETURN CODE [ %s ][ %s ] MSG [ %s ]" % (jsonObject["header"]["tr_key"], rt_cd, jsonObject["body"]["msg1"]))
+                
+            elif rt_cd == '0':  # 정상
+                pass
+            
+        elif trid == "PINGPONG":
+            raise PingPongException(data)
         
     async def receive_loop(self, callback: Callable):
         await self.connect()
         
         try:
             while True:
-                data = await self.session.recv()
-                recv_time = datetime.now(tz=timezone.utc).timestamp()
-                
-                if data[0] == '0':
-                    callback([recv_time, data])
+                try:
+                    await self.recv_handler(callback)
                     
-                elif data[0] == '1':
-                    continue
-                    
-                else:
+                except NotDataStringException as e:
                     try:
-                        jsonObject = json.loads(data)
-                        trid = jsonObject["header"]["tr_id"]
-                        
-                        if trid == "PINGPONG":
-                            logger.info(f"{data}")
-                            await self.session.pong(data)
-                        else:
-                            continue
-                    except:
+                        self.not_data_string_exception_handler(e.message)
                         continue
                     
+                    except PingPongException as e:
+                        logger.info(f"[POINPONG]{e.message}")
+                        await self.session.pong(e.message)
+                        continue
+
         except websockets.ConnectionClosed:
             print("Connection closed")
+

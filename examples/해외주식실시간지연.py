@@ -21,7 +21,7 @@ async def main():
     tr_id=TRCode.overseas_transaction, 
     stock_code=f"{TRKey.USA_DAY}{TRKey.USA_DAY_NASDAQ}{df[df['Korea name'] == '엔비디아']['Symbol'].values[0]}"
   )
-  
+
   await agent.send(message)
   agent.join()
   
