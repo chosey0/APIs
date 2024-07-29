@@ -4,7 +4,7 @@ import json
 import requests
 from datetime import datetime, timezone
 import websockets
-
+import asyncio
 from typing import Dict, Any, Tuple, Callable
 
 from interface.agent import AgentInterface
@@ -64,59 +64,48 @@ class KISAgent(AgentInterface):
 class KISWebSocketAgent(WebsocketAgent):
     def __init__(self, tr_id = None):
         super().__init__()
-        
+        self.name = "KISWebsocketAgent"
         if tr_id is not None:
             self.url = f"ws://ops.koreainvestment.com:21000/tryitout/{tr_id}"
         else:
             self.url = "ws://ops.koreainvestment.com:21000"
-    
-    async def recv_handler(self, callback: Callable):
-        recv_time = datetime.now(tz=timezone.utc).timestamp()
-        recvstr = await self.session.recv()
-        
-        if recvstr[0] == "0":
-            await callback([recv_time, recvstr])
-            print(recvstr)
-            return
-            # status_code, tr_id, cnt, datastr = recvstr.split("|")
-        else:
-            raise NotDataStringException(recvstr)
-    
-    def not_data_string_exception_handler(self, data: str):
-        jsonObject = json.loads(data)
-        trid = jsonObject["header"]["tr_id"]
-        
-        if trid != "PINGPONG":
-            rt_cd = jsonObject["body"]["rt_cd"]
-            
-            if rt_cd == '1':  # 에러
-                if jsonObject["body"]["msg1"] != 'ALREADY IN SUBSCRIBE':
-                    logger.error("### ERROR RETURN CODE [ %s ][ %s ] MSG [ %s ]" % (jsonObject["header"]["tr_key"], rt_cd, jsonObject["body"]["msg1"]))
-                
-            elif rt_cd == '0':  # 정상
-                pass
-            
-        elif trid == "PINGPONG":
-            raise PingPongException(data)
         
     async def receive_loop(self, callback: Callable):
         await self.connect()
         
-        try:
-            while True:
-                try:
-                    await self.recv_handler(callback)
+        while True:
+            try:
+                recvstr = await self.session.recv()
+                recv_time = datetime.now(tz=timezone.utc).timestamp()
+                
+                if recvstr[0] == "0":
+                    # print(recvstr)
+                    await callback([recv_time, recvstr])
                     
-                except NotDataStringException as e:
-                    try:
-                        self.not_data_string_exception_handler(e.message)
-                        continue
+                elif recvstr[0] == "1":
+                    continue
+                else:
+                    raise NotDataStringException(recvstr)
+                
+            except NotDataStringException as e:
+                jsonObject = json.loads(e.message)
+                trid = jsonObject["header"]["tr_id"]
+                
+                if trid != "PINGPONG":
+                    rt_cd = jsonObject["body"]["rt_cd"]
                     
-                    except PingPongException as e:
+                    if rt_cd == '1':  # 에러
+                        if jsonObject["body"]["msg1"] != 'ALREADY IN SUBSCRIBE':
+                            logger.error("### ERROR RETURN CODE [ %s ][ %s ] MSG [ %s ]" % (jsonObject["header"]["tr_key"], rt_cd, jsonObject["body"]["msg1"]))
+                        
+                    elif rt_cd == '0':  # 정상
                         logger.info(f"[POINPONG]{e.message}")
-                        await self.session.pong(e.message)
-                        continue
+                    
+                elif trid == "PINGPONG":
+                    logger.info(f"[POINPONG]{e.message}")
+                    await self.session.pong(e.message)
+                    continue
 
-        except websockets.ConnectionClosed:
-            print("Connection closed")
+            except websockets.ConnectionClosed:
+                print("Connection closed")
 
