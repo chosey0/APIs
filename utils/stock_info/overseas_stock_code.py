@@ -55,9 +55,9 @@ class StockCodeDownloader:
         except Exception as e:
             print(f"Error downloading data for {market_code}: {e}")
 
-def main():
-    downloader = StockCodeDownloader()
-    print(downloader.get_dataframe("nas")[["Korea name", "Symbol",  "realtime symbol"]])
+
+downloader = StockCodeDownloader()
+# print(downloader.get_dataframe("nas")[["Korea name", "Symbol",  "realtime symbol"]])
     # cmd = "2"
     # cmd = input("1: Download all markets, 2: Download a specific market \n")
 
@@ -66,6 +66,3 @@ def main():
     # elif cmd == '2':
     #     market_code = "nas" # input("Enter the market code (e.g., nas, nys, ams, shs, shi, szs, szi, tse, hks, hnx, hsx): ")
     #     downloader.download_specific_market(market_code)
-
-if __name__ == "__main__":
-    main()
